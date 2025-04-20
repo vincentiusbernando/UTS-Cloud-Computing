@@ -1,0 +1,38 @@
+/* Centering the form on the page */
+.centered-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f8f9fa;
+}
+
+.form-container {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-width: 400px;
+  width: 100%;
+}
+
+/* Modern input and button styling */
+.form-control {
+  border-radius: 4px;
+}
+
+.btn {
+  border-radius: 4px;
+}
+
+/* Alert Styling */
+.alert {
+  margin-top: 10px;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 576px) {
+  .form-container {
+    width: 90%;
+  }
+}
