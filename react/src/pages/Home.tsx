@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { fetchMovies } from "../api";
+import { fetchMovies } from "../API";
 import { Link } from 'react-router-dom';
 
 interface Movie {
@@ -8,6 +8,7 @@ interface Movie {
   title: string;
   tmdb_id: number;
   keywords: string;
+  genres: string;
   comments:string;
 }
 

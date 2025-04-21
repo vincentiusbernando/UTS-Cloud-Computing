@@ -17,6 +17,43 @@ app = Flask(__name__)
 CORS(app)
 app.config["JWT_SECRET"] = "ubayamultikultur"
 
+@app.route("/register", methods=["POST"])
+def register():
+    data = request.get_json()
+    email = data.get("email")
+    username = data.get("username")
+    password = data.get("password")
+
+    if not email or not username or not password:
+        return jsonify({"message": "All fields are required"}), 400
+
+    conn = mysql.connector.connect(**db_config)
+    cursor = conn.cursor(dictionary=True)
+
+    # Cek apakah email sudah digunakan
+    cursor.execute("SELECT id FROM users WHERE email = %s", (email,))
+    if cursor.fetchone():
+        cursor.close()
+        conn.close()
+        return jsonify({"message": "Email already registered"}), 400
+
+    # Cek apakah username sudah digunakan
+    cursor.execute("SELECT id FROM users WHERE username = %s", (username,))
+    if cursor.fetchone():
+        cursor.close()
+        conn.close()
+        return jsonify({"message": "Username already taken"}), 400
+
+    # Simpan user baru
+    cursor.execute(
+        "INSERT INTO users (email, username, password) VALUES (%s, %s, %s)",
+        (email, username, password)
+    )
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+    return jsonify({"message": "Registration successful"}), 200
 
 @app.route("/login", methods=["POST"])
 def login():
@@ -262,8 +299,6 @@ def movie_detail(movie_id):
         return jsonify({"error": "Movie not found"}), 404
 
 
-# except Exception as e:
-#     return jsonify({"error": str(e)}), 500
 
 
 if __name__ == "__main__":

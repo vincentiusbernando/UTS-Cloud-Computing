@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import axios from 'axios';
+import { addComment, fetchMovieDetail } from '../API';
 
 interface Comment {
   comment: string;
@@ -29,51 +29,28 @@ const MovieDetail = () => {
   useEffect(() => {
     const fetchMovieData = async () => {
       try {
-        const movieRes = await axios.get(`http://127.0.0.1:5000/movie_detail/${id}`);
-        const data = movieRes.data;
-  
-        // Parse comments if they are in string format
-        const parsedComments = typeof data.comments === 'string'
-          ? JSON.parse(data.comments)
-          : data.comments;
-  
-        setMovie({ ...data, comments: parsedComments });
-        console.log({ ...data, comments: parsedComments });
+        const data = await fetchMovieDetail(id!); // id tidak mungkin null di sini
+        setMovie(data);
+        console.log(data);
       } catch (err) {
-        setError('Failed to load movie details.' + err);
+        setError("Failed to load movie details. " + err);
       }
     };
   
     fetchMovieData();
   }, [id]);
-  
 
   const handleCommentSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newComment.trim()) return;
-
-    try {
-        
-        const response = await axios.post(
-          'http://localhost:5000/comment',
-          new URLSearchParams({
-            movie_id: movie?.id + "",
-            comment: newComment,
-          }),
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-              'Content-Type': 'application/x-www-form-urlencoded',
-            },
-          }
-        );
+    try{
+      await addComment(movie?.id+"", newComment);
+      
+    }
+    catch{
+      navigate("/login");
+    }
     
-        console.log('Success:', response.data.message);
-        window.location.reload();
-      } catch (error) {
-        console.error('Error:', error);
-        navigate("/login")
-      }
   };
 
   if (error) {
@@ -98,8 +75,6 @@ const MovieDetail = () => {
           />
           <p><strong>Genres:</strong> {movie.genres}</p>
           <p><strong>Keywords:</strong> {movie.keywords}</p>
-          <p><strong>Runtime:</strong> {movie.runtime} minutes</p>
-          <p><strong>Description:</strong> {movie.description}</p>
         </div>
 
         {/* Comments (70%) */}
