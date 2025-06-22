@@ -1,7 +1,7 @@
 // src/api.ts
 import axios from "axios";
 
-const API_BASE_URL = "https://api.ubaya.xyz/kel_6";
+const API_BASE_URL = "http://16.176.217.81";
 
 // Load token from localStorage
 // const getToken = () => localStorage.getItem("token");
