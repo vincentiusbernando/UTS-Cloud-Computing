@@ -6,11 +6,10 @@ from functools import wraps
 from flask_cors import CORS
 
 db_config = {
-    "host": "103.166.157.122",
-    "port": "3307",
-    "user": "mif",
-    "password": "",
-    "database": "movie",
+    "host": "movie-daniel.c5iy4mw4wok0.af-south-1.rds.amazonaws.com",
+    "user": "admin",
+    "password": "Ubay4-aws",
+    "database": "moviedb",
 }
 
 app = Flask(__name__)
@@ -174,7 +173,7 @@ def comment():
     if not movie_id or not comment_text:
         return jsonify({"error": "movie_id and comment are required"}), 400
     user_id = request.user["sub"]
-    conn = mysql.connector.connect(**db_config)
+    conn = mysql.connector.connect(**db_config, connection_timeout=10)
     cursor = conn.cursor()
     cursor.execute(
         "INSERT INTO movie_comments (user_id, movie_id, comment) VALUES (%s, %s, %s)",
@@ -302,4 +301,4 @@ def movie_detail(movie_id):
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(host="0.0.0.0", port=80, debug=True)
